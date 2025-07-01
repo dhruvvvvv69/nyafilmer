@@ -6,10 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
 export function HeroSection() {
-  const handleWatchClick = () => {
-    window.location.href = 'https://nyafilmer.gg/'
-  }
-
   return (
     <section className="relative h-[60vh] md:h-[70vh] flex items-center overflow-hidden">
       <div className="absolute inset-0">
@@ -63,7 +59,6 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <Button 
               size="lg" 
-              onClick={handleWatchClick}
               className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 h-auto group"
             >
               <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
@@ -72,7 +67,6 @@ export function HeroSection() {
             <Button 
               variant="outline" 
               size="lg"
-              onClick={handleWatchClick}
               className="border-gray-600 text-white hover:bg-gray-800/50 bg-transparent backdrop-blur-sm px-8 py-3 h-auto"
             >
               <Eye className="w-5 h-5 mr-2" />
