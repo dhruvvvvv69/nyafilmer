@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import Script from 'next/script'
-import Head from 'next/head'
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
+import { GripVerifyScript } from "@/components/grip-verify-script"
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -34,13 +33,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <Script 
-          src="https://gripverify.com/script_include.php?id=1821797"
-          strategy="beforeInteractive"
-        />
-      </head>
       <body className={inter.className}>
+        <GripVerifyScript />
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
