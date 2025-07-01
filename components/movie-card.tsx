@@ -19,6 +19,10 @@ interface MovieCardProps {
 }
 
 export function MovieCard({ movie, showRating = true, className = "" }: MovieCardProps) {
+  const handleWatchClick = () => {
+    window.location.href = 'https://nyafilmer.gg/'
+  }
+
   return (
     <div className={`group relative cursor-pointer ${className}`}>
       <div className="relative overflow-hidden rounded-lg bg-gray-800 transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl">
@@ -59,6 +63,7 @@ export function MovieCard({ movie, showRating = true, className = "" }: MovieCar
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
           <Button 
             size="sm" 
+            onClick={handleWatchClick}
             className="bg-red-600 hover:bg-red-700 text-white shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-all duration-300"
           >
             <Play className="w-4 h-4 mr-1" />

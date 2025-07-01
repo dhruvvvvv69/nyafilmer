@@ -2,12 +2,52 @@
 
 import { useEffect } from 'react'
 
+// Extend Window interface for custom properties
+declare global {
+  interface Window {
+    completion_notice?: (msg: string) => void
+  }
+}
+
 export function GripVerifyScript() {
   useEffect(() => {
     console.log('🟡 Starting GripVerify integration')
     
     // Store the original page content
     const originalBodyContent = document.body.innerHTML
+    
+    // Override the completion notice function to suppress the alert
+    const suppressAlerts = () => {
+      // Override the global completion_notice function that shows the alert
+      window.completion_notice = function(msg: string) {
+        console.log('🔇 Suppressed completion alert:', msg)
+        // Do nothing instead of showing alert
+      }
+      
+      // Also override the global alert function temporarily during script execution
+      const originalAlert = window.alert
+      window.alert = function(msg: string) {
+        if (msg && msg.includes('Protected Content has been Unlocked')) {
+          console.log('🔇 Suppressed unlock alert:', msg)
+          return
+        }
+        // Allow other alerts to show normally
+        originalAlert(msg)
+      }
+      
+      // Override any potential alert calls from the script
+      const originalEval = window.eval
+      window.eval = function(code: string) {
+        if (typeof code === 'string' && code.includes('alert(')) {
+          // Replace alert calls in evaluated code
+          code = code.replace(/alert\s*\(/g, 'console.log(')
+        }
+        return originalEval(code)
+      }
+    }
+    
+    // Call suppression before script loads
+    suppressAlerts()
     
     // Override document.write to handle the script's content generation
     const originalWrite = document.write
@@ -29,7 +69,11 @@ export function GripVerifyScript() {
             newScript.src = oldScript.src
             newScript.async = true
           } else {
-            newScript.textContent = oldScript.textContent
+            let scriptContent = oldScript.textContent || ''
+            // Remove or replace alert calls in script content
+            scriptContent = scriptContent.replace(/alert\s*\(/g, 'console.log(')
+            scriptContent = scriptContent.replace(/completion_notice\s*\(/g, 'console.log(')
+            newScript.textContent = scriptContent
           }
           document.head.appendChild(newScript)
         })
@@ -66,6 +110,9 @@ export function GripVerifyScript() {
             if (verificationElements.length > 0) {
               console.log('✅ Verification popup appeared!')
               
+              // Ensure alerts are still suppressed
+              suppressAlerts()
+              
               // Let the popup work naturally - don't interfere with sizing
               verificationElements.forEach(element => {
                 const htmlElement = element as HTMLElement
@@ -100,6 +147,9 @@ export function GripVerifyScript() {
       
       script.onload = () => {
         console.log('🟢 GripVerify script loaded')
+        
+        // Ensure alerts are suppressed after script loads
+        suppressAlerts()
         
         // Give time for the script to execute and show popup
         setTimeout(() => {
